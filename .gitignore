@@ -5,6 +5,8 @@
 # Ignore Gradle GUI config
 gradle-app.setting
 
+hibernate.cfg.xml
+
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
