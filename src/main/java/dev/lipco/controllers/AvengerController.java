@@ -20,6 +20,6 @@ public class AvengerController {
         ctx.status(200);
     };
 
-    
+
 
 }
