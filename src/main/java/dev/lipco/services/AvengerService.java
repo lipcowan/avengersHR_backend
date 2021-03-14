@@ -5,8 +5,6 @@ import java.util.Set;
 
 public interface AvengerService {
 
-
-
     Set<Avenger> getAllMembers();
     Set<Avenger> getManagers();
     Set<Avenger> getEmployees();
