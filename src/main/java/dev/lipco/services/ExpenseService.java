@@ -11,5 +11,5 @@ public interface ExpenseService {
 
     Expense reviewExpense(int id, int reviewer);
 
-    Expense finalizeDecision(int id, int reviewer, String reviewerComments);
+    Expense finalizeDecision(int id, int reviewer, boolean decision, String reviewerComments);
 }

@@ -58,7 +58,7 @@ public class PsqlExpenseDAO implements ExpenseDAO{
             if (connection!=null){
                 String getSql = "select * from expense where expense_id = ?";
 
-                PreparedStatement ps =  connection.prepareStatement(getSql;
+                PreparedStatement ps =  connection.prepareStatement(getSql);
 
                 ps.setInt(1, expenseId);
                 ResultSet rs = ps.executeQuery();
