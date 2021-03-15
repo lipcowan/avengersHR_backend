@@ -7,14 +7,15 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 public class JwtUtil {
 
     public static Algorithm getAlgo() {
-        String jwtSecret = System.getenv("CONN_AVENGERS");
+        String jwtSecret = System.getenv("API_SECRET");
         return Algorithm.HMAC256(jwtSecret);
     }
 
-    public static String makeJWT(int id, boolean is_manager){
+    public static String makeJWT(int id, String username, String password){
         return JWT.create()
-                .withClaim("manager", is_manager)
-                .withClaim("userID", id)
+                .withClaim("id", id)
+                .withClaim("empName", username)
+                .withClaim("password", password)
                 .sign(getAlgo());
     }
 

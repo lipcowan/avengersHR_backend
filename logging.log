@@ -1,0 +1,45 @@
+2021-03-14 20:40:51 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 20:41:41 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 20:42:19 INFO  LoginContoller:35 - Memberpeter successfully signed in!
+2021-03-14 20:44:57 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 20:46:34 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 20:49:57 ERROR ExpenseController:71 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-14 20:50:18 ERROR ExpenseController:71 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-14 20:53:27 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 20:54:20 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 20:58:19 INFO  LoginContoller:35 - Memberpepper successfully signed in!
+2021-03-14 21:02:18 ERROR ExpenseController:52 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-14 21:02:56 ERROR ExpenseController:52 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-14 21:03:11 ERROR ExpenseController:52 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-14 21:09:02 ERROR ExpenseController:52 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-14 21:28:47 INFO  LoginContoller:31 - Memberpepper successfully signed in!
+2021-03-14 21:29:06 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-14 21:30:34 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-14 21:32:22 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-14 21:32:34 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-14 21:32:39 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-14 21:33:02 INFO  LoginContoller:31 - Memberpepper successfully signed in!
+2021-03-14 21:49:34 INFO  LoginContoller:31 - Memberpepper successfully signed in!
+2021-03-14 21:55:27 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-14 21:57:16 INFO  LoginContoller:31 - Memberpeter successfully signed in!
+2021-03-15 07:49:44 INFO  LoginContoller:40 - Login successful: pepperhas signed in!
+2021-03-15 07:49:44 ERROR LoginContoller:47 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 07:56:12 ERROR LoginContoller:48 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 08:06:57 INFO  LoginContoller:40 - Login successful: pepperhas signed in!
+2021-03-15 08:06:57 ERROR LoginContoller:47 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 08:07:25 ERROR LoginContoller:47 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 08:07:33 INFO  LoginContoller:40 - Login successful: pepperhas signed in!
+2021-03-15 08:07:33 ERROR LoginContoller:47 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 08:07:53 ERROR LoginContoller:47 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 08:10:55 ERROR LoginContoller:47 - com.auth0.jwt.exceptions.JWTVerificationException: cannot find member
+2021-03-15 08:58:42 INFO  LoginController:34 - Login by pepper was successful
+2021-03-15 08:59:21 INFO  LoginController:34 - Login by pepper was successful
+2021-03-15 08:59:48 ERROR ExpenseController:77 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-15 09:03:40 ERROR ExpenseController:77 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 4.
+2021-03-15 09:04:24 ERROR ExpenseController:77 - com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 parts, but got 1.
+2021-03-15 09:05:21 ERROR ExpenseController:77 - com.auth0.jwt.exceptions.JWTDecodeException: The input is not a valid base 64 encoded string.
+2021-03-15 09:05:48 INFO  LoginController:34 - Login by pepper was successful
+2021-03-15 09:06:17 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $null
+2021-03-15 09:08:54 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $3500.03
+2021-03-15 09:52:18 INFO  LoginController:34 - Login by pepper was successful
+2021-03-15 09:53:18 INFO  LoginController:34 - Login by pepper was successful

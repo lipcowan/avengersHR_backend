@@ -18,6 +18,7 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 public class ExpenseController {
@@ -37,15 +38,20 @@ public class ExpenseController {
                 throw new JWTDecodeException("Unable to authorize");
             }
 
+            int userId = tokenContents.getClaim("id").asInt();
+            Avenger requester = avengerService.getMemberById(userId);
+
+
             String body = ctx.body();
             Gson gson = new Gson();
-            Expense bodyExpense = gson.fromJson(body,Expense.class);
-            Expense requestedExpense = expenseService.createRequest(bodyExpense);
-            Avenger requestingMember = avengerService.getMemberById(requestedExpense.getRequester());
+            Expense newExpense = gson.fromJson(body, Expense.class);
+            BigDecimal amount = newExpense.getAmount();
+            String expenseComments = newExpense.getExpenseComments();
+            Expense requestedExpense = expenseService.newRequest(userId, amount, expenseComments);
             String expenseJSON = gson.toJson(requestedExpense);
             ctx.result(expenseJSON);
             ctx.status(200);
-            logger.info("Member " + requestingMember.getFirstName() + " has submitted a new expense request, for $" + bodyExpense.getAmount());
+            logger.info("Member " + requester.getFirstName() + " has submitted a new expense request, for $" + newExpense.getAmount());
 
         }catch(JWTDecodeException e){
             ctx.status(400);
@@ -57,11 +63,11 @@ public class ExpenseController {
        try{
            String jwtToken = ctx.header("Authorization");
            DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-           int memberID = tokenContents.getClaim("id").asInt();
-           if(memberID == 0) {
+           Avenger reviewer = avengerService.getMemberById(tokenContents.getClaim("id").asInt());
+           if(reviewer.getId() == 0) {
                throw new JWTDecodeException("Unable to authorize member");
            }
-           Set<Expense> submittedExpenses = expenseService.viewSubmissions(memberID);
+           Set<Expense> submittedExpenses = expenseService.viewMemberSubmissions(reviewer.getId(), reviewer.isManager());
            Gson gson = new Gson();
            String submittedExpensesJSON = gson.toJson(submittedExpenses);
            ctx.result(submittedExpensesJSON);
@@ -76,12 +82,12 @@ public class ExpenseController {
         try{
             String jwtToken = ctx.header("Authorization");
             DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-            int reviewerID = tokenContents.getClaim("id").asInt();
-            if(reviewerID == 0 || jwtToken == null){
+            Avenger reviewer = avengerService.getMemberById(tokenContents.getClaim("id").asInt());
+            if(reviewer.getId() == 0 || jwtToken == null){
                 throw new JWTDecodeException("Unable to authorize user");
             }
             int expenseId = Integer.parseInt(ctx.pathParam("expenseId"));
-            Expense expense = expenseService.reviewExpense(expenseId, reviewerID);
+            Expense expense = expenseService.reviewExpense(expenseId, reviewer.getId());
             Gson gson = new Gson();
             String expenseJSON = gson.toJson(expense);
             ctx.result(expenseJSON);
@@ -95,36 +101,32 @@ public class ExpenseController {
     public Handler finalizeDecisionHandler = (Context ctx) -> {
         try{
             String jwtToken = ctx.header("Authorization");
+            DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
+            Avenger reviewingManager = avengerService.getMemberById(tokenContents.getClaim("id").asInt());
 
             if(jwtToken == null){
                 throw new JWTDecodeException("Unable to authorize user");
             }
 
-            DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-            int reviewerID = tokenContents.getClaim("id").asInt();
-            boolean canManage = tokenContents.getClaim("manager").asBoolean();
 
-            if(!canManage || reviewerID == 0){
+            if(!reviewingManager.isManager() || reviewingManager.getId() == 0){
                 throw new JWTDecodeException("User not permitted to update status");
             }
 
             int expenseId = Integer.parseInt(ctx.pathParam("expenseId"));
+            boolean decision = false;
             String body = ctx.body();
             Gson gson = new Gson();
             Expense reviewedExpense = gson.fromJson(body, Expense.class);
-
-            reviewedExpense.setExpenseId(expenseId);
-            String checkStatus = expenseService.reviewExpense(expenseId, reviewerID).getStatus();
-            String decision = reviewedExpense.getStatus();
+            if(reviewedExpense.getStatus().equals("approved")){
+               decision = true;
+            }
+            int reviewer = reviewingManager.getId();
             String comments = reviewedExpense.getReviewerComments();
-
-            if(!checkStatus.equals(decision)) {
-                expenseService.finalizeDecision(expenseId,reviewerID, decision.equals("approved"),comments);
-                ctx.result(gson.toJson(reviewedExpense));
-            }
-            else{
-                ctx.result(gson.toJson(expenseService.reviewExpense(expenseId,reviewerID)));
-            }
+            reviewedExpense = expenseService.finalizeDecision(expenseId, reviewer, decision, comments);
+            logger.info("Expense " + expenseId + " has been reviewed and is" + reviewedExpense.getStatus());
+            ctx.result(gson.toJson(reviewedExpense));
+            ctx.status(200);
         }catch(JWTDecodeException e){
             logger.error(e);
             ctx.status(403);

@@ -46,6 +46,20 @@ public class AvengerServiceImpl implements AvengerService{
     }
 
     @Override
+    public Avenger getMemberByUsername(String username, String password) {
+        Avenger a = new Avenger();
+        a.setUsername(username);
+        a.setPassword(password);
+        Set<Avenger> allMembers = this.adao.getAllMembers();
+        for(Avenger queryMember : allMembers){
+            if(queryMember.getUsername().equals(username) && queryMember.getPassword().equals(password)){
+                a = queryMember;
+            }
+        }
+        return a;
+    }
+
+    @Override
     public Avenger getMemberById(int id){
         return this.adao.getMemberById(id);
     }

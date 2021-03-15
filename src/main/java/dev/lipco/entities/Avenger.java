@@ -20,13 +20,26 @@ public class Avenger {
     @Column(name = "is_manager")
     private boolean manager;
 
+    @Column(name="username")
+    private String username;
+
+    @Column(name="password")
+    private String password;
+
     public Avenger() {}
 
-    public Avenger(int id, String firstName, String lastName, boolean manager) {
+    public Avenger(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
+
+    public Avenger(int id, String firstName, String lastName, boolean manager, String username, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.manager = manager;
+        this.username = username;
+        this.password = password;
     }
 
     public int getId() {
@@ -61,13 +74,31 @@ public class Avenger {
         this.manager = manager;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "Avenger{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", manager=" + manager +
+                ", manager='" + manager + '\'' +
+                ", username='" + username + '\'' +
+                ", password" +
                 '}';
     }
 }

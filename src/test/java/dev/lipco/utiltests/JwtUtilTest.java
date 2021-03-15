@@ -11,27 +11,29 @@ public class JwtUtilTest {
 
     @Test
     void make_JWT(){
-        String testJWT = JwtUtil.makeJWT(1,true);
+        String testJWT = JwtUtil.makeJWT(1, "ironlady1", true);
         System.out.println(testJWT);
     }
 
     @Test
     void decode_JWT() {
         // confirm this test isn't dependant on the results of previous test by creating new jwt
-        String testJWT = JwtUtil.makeJWT(2, true);
+        String testJWT = JwtUtil.makeJWT(1, "ironlady1", true);
         DecodedJWT decodedJWT = JwtUtil.isValidJWT(testJWT);
-        int testID = decodedJWT.getClaim("userID").asInt();
+        int testID = decodedJWT.getClaim("id").asInt();
+        String username = decodedJWT.getClaim("user").asString();
         boolean manager = decodedJWT.getClaim("manager").asBoolean();
-        Assertions.assertEquals(2, testID);
+        Assertions.assertEquals(1, testID);
+        Assertions.assertEquals("ironlady1", username);
         Assertions.assertTrue(manager);
-        System.out.println(testID);
+        System.out.println(testID + username);
     }
 
     @Test
     void invalid_JWT() {
         try {
-            DecodedJWT falseJWT = JwtUtil.isValidJWT("yJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJNYW5hZ2VyIjp0cnVlLCJ1c2VySUQiOjF9.fBGPHxCGJWH-sJ5vpQR8y-OaH8-XXGvdn0-593kD7mg");
-            int falseID = falseJWT.getClaim("userID").asInt();
+            DecodedJWT falseJWT = JwtUtil.isValidJWT(JwtUtil.makeJWT(1, "ironlady1", false));
+            int falseID = falseJWT.getClaim("id").asInt();
         } catch(JWTDecodeException e){
             e.getStackTrace();
             Assertions.assertTrue(true);

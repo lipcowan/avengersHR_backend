@@ -9,6 +9,7 @@ public interface AvengerService {
     Set<Avenger> getManagers();
     Set<Avenger> getEmployees();
 
+    Avenger getMemberByUsername(String username, String password);
     Avenger getMemberById(int id);
     Boolean checkManager(int id);
 

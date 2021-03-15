@@ -23,6 +23,8 @@ public class PsqlAvengerDAO implements AvengerDAO{
                 a.setFirstName(rs.getString("first_name"));
                 a.setLastName(rs.getString("last_name"));
                 a.setManager(rs.getBoolean("is_manager"));
+                a.setUsername(rs.getString("username"));
+                a.setPassword(rs.getString("password"));
                 members.add(a);
             }
             return members;
@@ -46,6 +48,8 @@ public class PsqlAvengerDAO implements AvengerDAO{
             a.setFirstName(rs.getString("first_name"));
             a.setLastName(rs.getString("last_name"));
             a.setManager(rs.getBoolean("is_manager"));
+            a.setUsername(rs.getString("username"));
+            a.setPassword(rs.getString("password"));
             return a;
 
         } catch (SQLException e) {

@@ -2,7 +2,7 @@ package dev.lipco.entities;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "expense")
@@ -23,7 +23,7 @@ public class Expense {
     private String status;
 
     @Column(name = "created_at")
-    private Instant createdTime;
+    private Timestamp createdTime;
 
     @Column(name = "requester_id")
     private int requester;
@@ -32,7 +32,7 @@ public class Expense {
     private int reviewer;
 
     @Column(name = "decision_at")
-    private Instant decisionTime;
+    private Timestamp decisionTime;
 
     @Column(name = "decision_comments")
     private String reviewerComments;
@@ -45,7 +45,7 @@ public class Expense {
         this.requester = requester;
     }
 
-    public Expense(int expenseId, BigDecimal amount, String expenseComments, String status, Instant createdTime, int requester, int reviewer, Instant decisionTime, String reviewerComments) {
+    public Expense(int expenseId, BigDecimal amount, String expenseComments, String status, Timestamp createdTime, int requester, int reviewer, Timestamp decisionTime, String reviewerComments) {
         this.expenseId = expenseId;
         this.amount = amount;
         this.expenseComments = expenseComments;
@@ -89,11 +89,11 @@ public class Expense {
         this.status = status;
     }
 
-    public Instant getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Instant createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
@@ -113,11 +113,11 @@ public class Expense {
         this.reviewer = reviewer;
     }
 
-    public Instant getDecisionTime() {
+    public Timestamp getDecisionTime() {
         return decisionTime;
     }
 
-    public void setDecisionTime(Instant decisionTime) {
+    public void setDecisionTime(Timestamp decisionTime) {
         this.decisionTime = decisionTime;
     }
 

@@ -5,6 +5,7 @@ import dev.lipco.daos.ExpenseDAO;
 import dev.lipco.entities.Avenger;
 import dev.lipco.daos.AvengerDAO;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,55 +18,59 @@ public class ExpenseServiceImpl implements ExpenseService {
         this.adao = avengerDAO;
     }
 
-    @Override
-    public Expense createRequest(Expense expense) {
-        String status = "pending";
-
-        expense.setStatus(status);
-
-       return edao.createExpense(expense);
+    public enum Status {
+        pending,
+        denied,
+        approved;
     }
 
     @Override
-    public Set<Expense> viewSubmissions(int reviewer){
-        Avenger member = adao.getMemberById(reviewer);
-        boolean manager = member.isManager();
+    public Expense newRequest(int requester, BigDecimal amount, String expenseComments) {
+        // no need to set anything else since db is setting default values and other values are null still
+//        String status = "pending";
+        return edao.createExpense(requester, amount, expenseComments);
+    }
+
+    @Override
+    public Set<Expense> viewMemberSubmissions(int reviewer, boolean manager){
+        Avenger reviewingMember = adao.getMemberById(reviewer);
         Set<Expense> memberExpenses = new HashSet<>();
         Set<Expense> allExpenses = edao.getAllExpenses();
-        if (manager) {
-            return allExpenses;
-        } else {
-            for(Expense e : allExpenses) {
-                if(e.getRequester() == member.getId()) {
-                    memberExpenses.add(e);
-                }
-                return memberExpenses;
+
+        for(Expense e : allExpenses) {
+            if (e.getRequester() == reviewingMember.getId()) {
+                memberExpenses.add(e);
             }
         }
-        return  null;
+        return  manager? allExpenses: memberExpenses;
     }
 
     @Override
-    public Expense reviewExpense(int id, int reviewer) {
-        Avenger member = adao.getMemberById(reviewer);
-        Expense expense = edao.getExpenseById(id);
-        if (expense.getRequester() == member.getId() || member.isManager()) {
-            return expense;
+    public Expense reviewExpense(int expenseId, int reviewer) {
+        Avenger reviewingMember = adao.getMemberById(reviewer);
+        Expense reviewedExpense = edao.getExpenseById(expenseId);
+        boolean manager = reviewingMember.isManager();
+        if (manager || reviewedExpense.getRequester() == reviewer){
+            return  reviewedExpense;
         }
         return null;
     }
 
     @Override
-    public Expense finalizeDecision(int id, int reviewer, boolean decision, String reviewerComments){
-        Avenger managingMember = adao.getMemberById(reviewer);
-        Expense reviewedExpense  = edao.getExpenseById(id);
-        // preventing managers from approving their own expenses - can approve all other members
-        if (managingMember.isManager() && managingMember.getId() != reviewedExpense.getRequester()){
-            reviewedExpense.setReviewer(managingMember.getId());
+    public Expense finalizeDecision(int expenseId, int reviewer, boolean decision, String reviewerComments){
+        Avenger manager = adao.getMemberById(reviewer);
+        Expense reviewedExpense  = edao.getExpenseById(expenseId);
+        // will add additional parameter checking to prevent managers from approving their own expenses - can approve all other members
+        if (manager.isManager()){
+            reviewedExpense.setReviewer(reviewer);
             reviewedExpense.setReviewerComments(reviewerComments);
-            return edao.updateExpense(reviewedExpense);
+            if(decision){
+                reviewedExpense.setStatus("approved");
+            }else{
+                reviewedExpense.setStatus("denied");
+            }
         }
-        return null;
+        return edao.updateExpense(reviewedExpense);
     }
 
 }
