@@ -11,7 +11,7 @@ public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "expense_id")
-    private int id;
+    private int expenseId;
 
     @Column(name = "amount")
     private BigDecimal amount;
@@ -39,8 +39,14 @@ public class Expense {
 
     public Expense() {}
 
-    public Expense(int id, BigDecimal amount, String expenseComments, String status, Instant createdTime, int requester, int reviewer, Instant decisionTime, String reviewerComments) {
-        this.id = id;
+    public Expense(BigDecimal amount, String expenseComments, int requester) {
+        this.amount = amount;
+        this.expenseComments = expenseComments;
+        this.requester = requester;
+    }
+
+    public Expense(int expenseId, BigDecimal amount, String expenseComments, String status, Instant createdTime, int requester, int reviewer, Instant decisionTime, String reviewerComments) {
+        this.expenseId = expenseId;
         this.amount = amount;
         this.expenseComments = expenseComments;
         this.status = status;
@@ -51,12 +57,12 @@ public class Expense {
         this.reviewerComments = reviewerComments;
     }
 
-    public int getId() {
-        return id;
+    public int getExpenseId() {
+        return expenseId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setExpenseId(int expenseId) {
+        this.expenseId = expenseId;
     }
 
     public BigDecimal getAmount() {
@@ -126,7 +132,7 @@ public class Expense {
     @Override
     public String toString() {
         return "Expense{" +
-                "id=" + id +
+                "expenseId=" + expenseId +
                 ", amount=" + amount +
                 ", expenseComments='" + expenseComments + '\'' +
                 ", status='" + status + '\'' +

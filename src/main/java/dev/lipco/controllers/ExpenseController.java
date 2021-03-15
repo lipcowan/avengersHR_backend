@@ -18,7 +18,6 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.apache.log4j.Logger;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Set;
 
 public class ExpenseController {
@@ -114,7 +113,7 @@ public class ExpenseController {
             Gson gson = new Gson();
             Expense reviewedExpense = gson.fromJson(body, Expense.class);
 
-            reviewedExpense.setId(expenseId);
+            reviewedExpense.setExpenseId(expenseId);
             String checkStatus = expenseService.reviewExpense(expenseId, reviewerID).getStatus();
             String decision = reviewedExpense.getStatus();
             String comments = reviewedExpense.getReviewerComments();

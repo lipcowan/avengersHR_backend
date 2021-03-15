@@ -22,21 +22,19 @@ public class PsqlExpenseDAO implements ExpenseDAO{
                 Instant instant = Instant.now();
                 Timestamp ts = instant != null ? new Timestamp(instant.toEpochMilli()) : null;
 
-                String createSql = "insert into expense (amount, expense_comments, expense_status, created_at, requester_id) values(?,?,?,?,?)";
+                String createSql = "insert into expense (amount, expense_comments, requester_id) values(?,?,?)";
                 PreparedStatement ps = connection.prepareStatement(createSql, Statement.RETURN_GENERATED_KEYS);
 
                 ps.setBigDecimal(1, expense.getAmount());
                 ps.setString(2, expense.getExpenseComments());
-                ps.setString(3, expense.getStatus());
-                ps.setTimestamp(4,ts ,tzUTC);
-                ps.setInt(4, expense.getRequester());
+                ps.setInt(3, expense.getRequester());
 
                 ps.execute();
                 ResultSet rs = ps.getGeneratedKeys();
                 rs.next();
 
                 int generatedKey = rs.getInt("expense_id");
-                expense.setId(generatedKey);
+                expense.setExpenseId(generatedKey);
 
                 return expense;
             }
@@ -70,7 +68,7 @@ public class PsqlExpenseDAO implements ExpenseDAO{
                 Instant instantReviewed = reviewedTS !=null ? Instant.ofEpochMilli(reviewedTS.getTime()) : null;
 
                 Expense expense = new Expense();
-                expense.setId(rs.getInt("expense_id"));
+                expense.setExpenseId(rs.getInt("expense_id"));
                 expense.setAmount(rs.getBigDecimal("amount"));
                 expense.setExpenseComments(rs.getString("expense_comments"));
                 expense.setStatus(rs.getString("expense_status"));
@@ -109,7 +107,7 @@ public class PsqlExpenseDAO implements ExpenseDAO{
                     Timestamp reviewedTS = rs.getTimestamp("decision_at", tzUTC);
                     Instant instantReviewed = reviewedTS !=null ? Instant.ofEpochMilli(reviewedTS.getTime()) : null;
 
-                    exp.setId(rs.getInt("expense_id"));
+                    exp.setExpenseId(rs.getInt("expense_id"));
                     exp.setAmount(rs.getBigDecimal("amount"));
                     exp.setExpenseComments(rs.getString("expense_comments"));
                     exp.setStatus(rs.getString("expense_status"));
