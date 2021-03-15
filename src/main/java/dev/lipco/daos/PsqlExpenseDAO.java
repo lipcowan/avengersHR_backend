@@ -13,11 +13,17 @@ import java.util.TimeZone;
 public class PsqlExpenseDAO implements ExpenseDAO{
 
     public static final Calendar tzUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-    public static final Connection connection = ConnectionUtil.makeConnection();
+
+    public enum Status {
+        pending,
+        denied,
+        approved;
+    }
+
 
     @Override
     public Expense createExpense(Expense expense) {
-        try(connection){
+        try(Connection connection = ConnectionUtil.makeConnection()){
             if (connection!=null){
                 Instant instant = Instant.now();
                 Timestamp ts = instant != null ? new Timestamp(instant.toEpochMilli()) : null;
@@ -51,7 +57,7 @@ public class PsqlExpenseDAO implements ExpenseDAO{
 
     @Override
     public Expense getExpenseById(int expenseId){
-        try(connection){
+        try(Connection connection = ConnectionUtil.makeConnection()){
 
             if (connection!=null){
                 String getSql = "select * from expense where expense_id = ?";
@@ -93,7 +99,7 @@ public class PsqlExpenseDAO implements ExpenseDAO{
     @Override
     public Set<Expense> getAllExpenses() {
         Set<Expense> allExpenses = new HashSet<Expense>();
-        try(connection){
+        try(Connection connection = ConnectionUtil.makeConnection()){
             if (connection!=null) {
                 String getAllSql = "select * from expense";
                 PreparedStatement ps = connection.prepareStatement(getAllSql);
@@ -132,17 +138,20 @@ public class PsqlExpenseDAO implements ExpenseDAO{
 
     @Override
     public Expense updateExpense(Expense expense){
-        try(connection){
+        try(Connection connection = ConnectionUtil.makeConnection()){
             if(connection!=null){
-                String updateSql = "update expense set status = ?, reviewer_id = ?, decision_at = ?, decision_comments = ?";
+                String updateSql = "update expense set expense_status = ?::status, reviewer_id = ?, decision_at = ?, decision_comments = ? where expense_id = ?";
                 PreparedStatement ps = connection.prepareStatement(updateSql);
 
-                Timestamp reviewedTS = Timestamp.from(expense.getDecisionTime());
+               Instant reviewedTS = new Timestamp(System.currentTimeMillis()).toInstant();
+
+
 
                 ps.setString(1, expense.getStatus());
                 ps.setInt(2, expense.getReviewer());
-                ps.setTimestamp(3, reviewedTS, tzUTC);
+                ps.setTimestamp(3, Timestamp.from(reviewedTS), tzUTC);
                 ps.setString(4, expense.getReviewerComments());
+                ps.setInt(5, expense.getExpenseId());
 
                 ps.execute();
                 return expense;
