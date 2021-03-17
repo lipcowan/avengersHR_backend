@@ -1,138 +1,197 @@
 package dev.lipco.controllers;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import dev.lipco.entities.Expense;
-import dev.lipco.daos.PsqlExpenseDAO;
+import dev.lipco.entities.*;
 import dev.lipco.services.ExpenseService;
-import dev.lipco.services.ExpenseServiceImpl;
-
-import dev.lipco.entities.Avenger;
-import dev.lipco.daos.PsqlAvengerDAO;
-import dev.lipco.services.AvengerService;
-import dev.lipco.services.AvengerServiceImpl;
-
 import dev.lipco.utils.JwtUtil;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.apache.log4j.Logger;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 public class ExpenseController {
 
+    private ExpenseService eservice;
+    private final Gson gson = new Gson();
     private static Logger logger = Logger.getLogger(ExpenseController.class.getName());
 
-    private ExpenseService expenseService = new ExpenseServiceImpl(new PsqlExpenseDAO(), new PsqlAvengerDAO());
-    private AvengerService avengerService = new AvengerServiceImpl(new PsqlAvengerDAO());
+
+    public ExpenseController(ExpenseService expenseService) {
+        if(expenseService == null) {
+            throw new NullPointerException();
+        }
+        eservice = expenseService;
+    }
+
+    private Avenger avengerVerified (Context ctx) {
+        String authorization = ctx.header("Authorization");
+        if(authorization == null) {
+            return null;
+        }
+        DecodedJWT jwt = JwtUtil.isValidJWT(authorization);
+        if(jwt == null) {
+            return null;
+        }
+        Avenger user = new Avenger();
+        user.setId(jwt.getClaim("memberId").asInt());
+        user.setUsername(jwt.getClaim("username").asString());
+        user.setManager(jwt.getClaim("isManager").asBoolean());
+        return user;
+    }
+
+    public Handler getUser = (ctx) -> {
+      Avenger user = avengerVerified(ctx);
+        if(user == null) {
+            ctx.status(403);
+            ctx.result("Missing or invalid JWT. Please log in");
+        }
+        Avenger avengerUser = eservice.getAvenger(user);
+        if(avengerUser == null) {
+            ctx.status(404);
+            ctx.result("Could not find userdata");
+        }
+        ctx.status(200);
+        ctx.result(gson.toJson(avengerUser));
+    };
+
 
     // anyone can create an expense
-    public Handler createRequestHandler = (Context ctx) -> {
+    public Handler newRequest = (Context ctx) -> {
+        Avenger user = avengerVerified(ctx);
+        if(user == null) {
+            ctx.status(403);
+            ctx.result("Missing or invalid JWT. Please log in");
+        }
         try{
-            String jwtToken = ctx.header("Authorization");
-            DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-
-            if(tokenContents == null) {
-                throw new JWTDecodeException("Unable to authorize");
+            Expense expense = gson.fromJson(ctx.body(), Expense.class);
+            if(expense == null){
+                ctx.status(400);
+                ctx.result("Expense fields empty");
             }
-
-            int userId = tokenContents.getClaim("id").asInt();
-            Avenger requester = avengerService.getMemberById(userId);
-
-
-            String body = ctx.body();
-            Gson gson = new Gson();
-            Expense newExpense = gson.fromJson(body, Expense.class);
-            BigDecimal amount = newExpense.getAmount();
-            String expenseComments = newExpense.getExpenseComments();
-            Expense requestedExpense = expenseService.newRequest(userId, amount, expenseComments);
-            String expenseJSON = gson.toJson(requestedExpense);
-            ctx.result(expenseJSON);
-            ctx.status(200);
-            logger.info("Member " + requester.getFirstName() + " has submitted a new expense request, for $" + newExpense.getAmount());
-
-        }catch(JWTDecodeException e){
+            Expense newExpense = eservice.newRequest(user, expense);
+            if (newExpense == null) {
+                ctx.status(500);
+                ctx.result("Could not create expense");
+            }
+            ctx.status(201);
+            ctx.result(gson.toJson(newExpense));
+        }catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
             ctx.status(400);
-            logger.error(e);
+            ctx.result(e.getMessage());
+        } catch (JsonSyntaxException n) {
+            ctx.status(400);
+            ctx.result(n.getMessage());
         }
     };
 
-    public Handler viewSubmissionsHandler = (Context ctx) -> {
-       try{
-           String jwtToken = ctx.header("Authorization");
-           DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-           Avenger reviewer = avengerService.getMemberById(tokenContents.getClaim("id").asInt());
-           if(reviewer.getId() == 0) {
-               throw new JWTDecodeException("Unable to authorize member");
-           }
-           Set<Expense> submittedExpenses = expenseService.viewMemberSubmissions(reviewer.getId(), reviewer.isManager());
-           Gson gson = new Gson();
-           String submittedExpensesJSON = gson.toJson(submittedExpenses);
-           ctx.result(submittedExpensesJSON);
-           ctx.status(200);
-       }catch(JWTDecodeException e){
-           ctx.status(403);
-           logger.error(e);
-       }
-    };
+//    public Handler getExpense = (ctx) -> {
+//        Avenger user = avengerVerified(ctx);
+//        if(user == null) {
+//            ctx.status(403);
+//            ctx.result("Missing or invalid JWT. Please log in");
+//            return;
+//        }
+//        try {
+//            Expense expense = new Expense();
+//            expense.setExpenseId(Integer.parseInt(ctx.pathParam("expenseId")));
+//            if(fullExpense == null) {
+//                ctx.status(404);
+//                ctx.result("Expense not found");
+//                return;
+//            }
+//            ctx.status(200);
+//            ctx.result(gson.toJson(fullExpense));
+//        } catch (IllegalAccessException i) {
+//            ctx.status(403);
+//            ctx.result(i.getMessage());
+//        } catch (IllegalArgumentException n) {
+//            ctx.status(400);
+//            ctx.result(n.getMessage());
+//        }
+//    };
 
-    public Handler reviewExpenseHandler = (Context ctx) -> {
-        try{
-            String jwtToken = ctx.header("Authorization");
-            DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-            Avenger reviewer = avengerService.getMemberById(tokenContents.getClaim("id").asInt());
-            if(reviewer.getId() == 0 || jwtToken == null){
-                throw new JWTDecodeException("Unable to authorize user");
-            }
-            int expenseId = Integer.parseInt(ctx.pathParam("expenseId"));
-            Expense expense = expenseService.reviewExpense(expenseId, reviewer.getId());
-            Gson gson = new Gson();
-            String expenseJSON = gson.toJson(expense);
-            ctx.result(expenseJSON);
-            ctx.status(200);
-        }catch(JWTDecodeException e){
-            logger.error(e);
+    public Handler getAllExpenses = (ctx) -> {
+        Avenger user = avengerVerified(ctx);
+        if(user == null) {
             ctx.status(403);
+            ctx.result("Missing or invalid JWT. Please log in");
+            return;
         }
-    };
-
-    public Handler finalizeDecisionHandler = (Context ctx) -> {
-        try{
-            String jwtToken = ctx.header("Authorization");
-            DecodedJWT tokenContents = JwtUtil.isValidJWT(jwtToken);
-            Avenger reviewingManager = avengerService.getMemberById(tokenContents.getClaim("id").asInt());
-
-            if(jwtToken == null){
-                throw new JWTDecodeException("Unable to authorize user");
+        try {
+            Set<Expense> expenses = eservice.getAllSubmissions(user);
+            if(expenses == null) {
+                ctx.status(500);
+                ctx.result("Could not retrieve expenses");
+                return;
             }
-
-
-            if(!reviewingManager.isManager() || reviewingManager.getId() == 0){
-                throw new JWTDecodeException("User not permitted to update status");
-            }
-
-            int expenseId = Integer.parseInt(ctx.pathParam("expenseId"));
-            boolean decision = false;
-            String body = ctx.body();
-            Gson gson = new Gson();
-            Expense reviewedExpense = gson.fromJson(body, Expense.class);
-            if(reviewedExpense.getStatus().equals("approved")){
-               decision = true;
-            }
-            int reviewer = reviewingManager.getId();
-            String comments = reviewedExpense.getReviewerComments();
-            reviewedExpense = expenseService.finalizeDecision(expenseId, reviewer, decision, comments);
-            logger.info("Expense " + expenseId + " has been reviewed and is" + reviewedExpense.getStatus());
-            ctx.result(gson.toJson(reviewedExpense));
             ctx.status(200);
-        }catch(JWTDecodeException e){
-            logger.error(e);
+            ctx.result(gson.toJson(expenses));
+        } catch (IllegalAccessException i ) {
             ctx.status(403);
+            ctx.result(i.getMessage());
         }
     };
 
+    public Handler updateExpense = (ctx) -> {
+        Avenger user = avengerVerified(ctx);
+        if(user == null) {
+            ctx.status(403);
+            ctx.result("Missing or invalid JWT. Please log in");
+            return;
+        }
+        try {
+            Expense expense = gson.fromJson(ctx.body(), Expense.class);
+            expense.setExpenseId(Integer.parseInt(ctx.pathParam("expenseId")));
+            Expense updatedExpense = eservice.reviewRequest(user, expense);
+            if(updatedExpense == null) {
+                ctx.status(404);
+                ctx.result("Could not update expense or expense doesn't exist");
+                return;
+            }
+            ctx.status(200);
+            ctx.result(gson.toJson(updatedExpense));
+        } catch (IllegalAccessException i) {
+            ctx.status(403);
+            ctx.result(i.getMessage());
+        } catch (IllegalArgumentException n) {
+            ctx.status(400);
+            ctx.result(n.getMessage());
+        } catch (NullPointerException e) {
+            ctx.status(400);
+            ctx.result("No expense info given");
+        }
+    };
 
+    public Handler getUserLogin = ctx -> {
+        LoginCredentials login = gson.fromJson(ctx.body(), LoginCredentials.class);
+        if(login == null) {
+            ctx.status(400);
+            ctx.result("No login information provided");
+            logger.warn("Login attempt made with empty request payload");
+            return;
+        }
+        try{
+            Avenger user = eservice.login(login);
+            if (user == null) {
+                ctx.status(403);
+                ctx.result("Login failed");
+                logger.warn("Failed attempted login with username: " + login.getUsername());
+                return;
+            }
+            String jwt = JwtUtil.makeJWT(user);
+            user.setJwt(jwt);
+            ctx.status(200);
+            ctx.result(gson.toJson(user));
+            logger.info("Login for user " + login.getUsername());
+        } catch (IllegalAccessException i) {
+            ctx.status(403);
+            ctx.result(i.getMessage());
+        }
+    };
 
 }

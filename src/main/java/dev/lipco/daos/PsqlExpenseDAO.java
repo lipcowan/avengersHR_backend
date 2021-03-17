@@ -1,154 +1,156 @@
 package dev.lipco.daos;
 
-import dev.lipco.entities.Expense;
+import dev.lipco.entities.*;
 import dev.lipco.utils.ConnectionUtil;
+import org.apache.log4j.Logger;
 
-import java.math.BigDecimal;
+
 import java.sql.*;
-import java.time.Instant;
 import java.util.Set;
 import java.util.HashSet;
 
 public class PsqlExpenseDAO implements ExpenseDAO{
 
-    public enum Status {
-        pending,
-        denied,
-        approved;
-    }
-
+    static Logger logger = Logger.getLogger(PsqlExpenseDAO.class.getName());
 
     @Override
-    public Expense createExpense(int requester, BigDecimal amount, String expenseComments) {
-        try(Connection connection = ConnectionUtil.makeConnection()){
-            if (connection!=null){
+    public Expense createExpense(Expense expense){
+        try(Connection conn = ConnectionUtil.makeConnection()){
+            String query = "insert into expense (amount, expense_comments, requester_id) values (?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setBigDecimal(1, expense.getAmount());
+            ps.setString(2, expense.getExpenseComments());
+            ps.setInt(3, expense.getRequester());
+            ps.execute();
 
-                Expense newExpense = new Expense();
-
-                String createSql = "insert into expense (amount, expense_comments, requester_id) values(?,?,?)";
-                PreparedStatement ps = connection.prepareStatement(createSql, Statement.RETURN_GENERATED_KEYS);
-
-                ps.setBigDecimal(1, amount);
-                newExpense.setAmount(amount);
-                ps.setString(2, expenseComments);
-                newExpense.setExpenseComments(expenseComments);
-                ps.setInt(3, requester);
-                newExpense.setRequester(requester);
-                ps.execute();
-                ResultSet rs = ps.getGeneratedKeys();
-                rs.next();
-
-                int generatedIdKey = rs.getInt("expense_id");
-                newExpense.setExpenseId(generatedIdKey);
-
-                return newExpense;
-            }
-
-            else {
-                throw new SQLException();
-            }
-
-        } catch (SQLException e){
-            e.printStackTrace();
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            expense.setExpenseId(rs.getInt("expense_id"));
+            return expense;
+        }catch(SQLException e){
+            logger.error(e.getMessage());
             return null;
         }
     }
 
     @Override
     public Expense getExpenseById(int expenseId){
-        try(Connection connection = ConnectionUtil.makeConnection()){
-
-            if (connection!=null){
-                String getSql = "select * from expense where expense_id = ?";
-
-                PreparedStatement ps =  connection.prepareStatement(getSql);
-
-                ps.setInt(1, expenseId);
-                ResultSet rs = ps.executeQuery();
-                rs.next();
-
-
-                Expense expense = new Expense();
-                expense.setExpenseId(rs.getInt("expense_id"));
-                expense.setAmount(rs.getBigDecimal("amount"));
-                expense.setExpenseComments(rs.getString("expense_comments"));
-                expense.setStatus(rs.getString("expense_status"));
-                expense.setCreatedTime(rs.getTimestamp("created_at"));
-                expense.setRequester(rs.getInt("requester_id"));
-                expense.setReviewer(rs.getInt("reviewer_id"));
-                expense.setDecisionTime(rs.getTimestamp("decision_at"));
-                expense.setReviewerComments(rs.getString("decision_comments"));
-                return expense;
-            }
-
-            else {
-                throw new SQLException();
-            }
-
-        } catch (SQLException e){
-            e.printStackTrace();
+        try(Connection conn = ConnectionUtil.makeConnection()){
+            String query = "select a.username, e.* from avengers a join expense e on a.id = e.requester_id where e.expense_id = ? ";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, expenseId);
+            ResultSet rs = ps.executeQuery();
+            Expense exp = new Expense();
+            exp.setUsername(rs.getString("username"));
+            exp.setExpenseId(rs.getInt("expense_id"));
+            exp.setAmount(rs.getBigDecimal("amount"));
+            exp.setExpenseComments(rs.getString("expense_comments"));
+            exp.setStatus(rs.getString("expense_status"));
+            exp.setCreatedTime(rs.getTimestamp("created_at"));
+            exp.setRequester(rs.getInt("requester_id"));
+            exp.setDecisionTime(rs.getTimestamp("decision_at"));
+            exp.setReviewerComments(rs.getString("decision_comments"));
+            exp.setReviewer(rs.getInt("reviewer_id"));
+            return exp;
+        }catch(SQLException e){
+            logger.error(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public Set<Expense> getAllExpenses() {
-        Set<Expense> allExpenses = new HashSet<Expense>();
-        try(Connection connection = ConnectionUtil.makeConnection()){
-            if (connection!=null) {
-                String getAllSql = "select * from expense";
-                PreparedStatement ps = connection.prepareStatement(getAllSql);
-                ResultSet rs = ps.executeQuery();
-
-                while (rs.next()){
-                    Expense exp = new Expense();
-                    exp.setExpenseId(rs.getInt("expense_id"));
-                    exp.setAmount(rs.getBigDecimal("amount"));
-                    exp.setExpenseComments(rs.getString("expense_comments"));
-                    exp.setStatus(rs.getString("expense_status"));
-                    exp.setCreatedTime(rs.getTimestamp("created_at"));
-                    exp.setRequester(rs.getInt("requester_id"));
-                    exp.setReviewer(rs.getInt("reviewer_id"));
-                    exp.setDecisionTime(rs.getTimestamp("decision_at"));
-                    exp.setReviewerComments(rs.getString("decision_comments"));
-                    allExpenses.add(exp);
-                }
-                return allExpenses;
+    public Set<Expense> getAllExpenses(){
+        try(Connection conn = ConnectionUtil.makeConnection()){
+            String query = "select a.username, e.* from avengers a join expense e on a.id = e.requester_id";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            Set<Expense> expenses = new HashSet<>();
+            while(rs.next()) {
+                Expense exp = new Expense();
+                exp.setUsername(rs.getString("username"));
+                exp.setExpenseId(rs.getInt("expense_id"));
+                exp.setAmount(rs.getBigDecimal("amount"));
+                exp.setExpenseComments(rs.getString("expense_comments"));
+                exp.setStatus(rs.getString("expense_status"));
+                exp.setCreatedTime(rs.getTimestamp("created_at"));
+                exp.setRequester(rs.getInt("requester_id"));
+                exp.setDecisionTime(rs.getTimestamp("decision_at"));
+                exp.setReviewerComments(rs.getString("decision_comments"));
+                exp.setReviewer(rs.getInt("reviewer_id"));
+                expenses.add(exp);
             }
-            else {
-                throw new SQLException();
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-            return allExpenses;
+            return expenses;
+        }catch(SQLException e){
+            logger.error(e.getMessage());
+            return null;
         }
     }
 
     @Override
-    public Expense updateExpense(Expense reviewedExpense){
-        // updating to standard sql timestamp format for simplicity
-        try(Connection connection = ConnectionUtil.makeConnection()){
-            if(connection!=null){
-                String updateSql = "update expense set expense_status = ?::status, reviewer_id = ?, decision_at = ?, decision_comments = ? where expense_id = ?";
-                PreparedStatement ps = connection.prepareStatement(updateSql);
+    public Expense updateExpense(Expense expense){
+        try(Connection conn = ConnectionUtil.makeConnection()){
+            String query = "update expense set status = ?, reviewer_id = ?, decision_at = ?, decision_comments = ? where expense_id = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, expense.getStatus());
+            ps.setInt(2, expense.getReviewer());
+            ps.setTimestamp(3, expense.getDecisionTime());
+            ps.setString(4, expense.getReviewerComments());
+            ps.setInt(5, expense.getExpenseId());
+            int rs = ps.executeUpdate();
+            return rs > 0 ? expense : null;
+        }catch(SQLException e){
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
 
-                Instant updatedExpInstant = Instant.now();
-                Timestamp decisionTS = Timestamp.from(updatedExpInstant);
+    @Override
+    public Avenger getAvenger(Avenger avenger){
+        try(Connection conn = ConnectionUtil.makeConnection()){
+            String query = "select a.username, e.* from avengers a join expense e on a.id = e.requester_id where a.id = ? ";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, avenger.getId());
+            ResultSet rs = ps.executeQuery();
 
-                ps.setString(1, reviewedExpense.getStatus());
-                ps.setInt(2, reviewedExpense.getReviewer());
-                ps.setTimestamp(3, decisionTS);
-                ps.setString(4, reviewedExpense.getReviewerComments());
-                ps.setInt(5, reviewedExpense.getExpenseId());
-                ps.execute();
-                return reviewedExpense;
+            HashSet<Expense> expenses = new HashSet<>();
+            while(rs.next()) {
+                Expense exp = new Expense();
+                exp.setUsername(rs.getString("username"));
+                exp.setExpenseId(rs.getInt("expense_id"));
+                exp.setAmount(rs.getBigDecimal("amount"));
+                exp.setExpenseComments(rs.getString("expense_comments"));
+                exp.setStatus(rs.getString("expense_status"));
+                exp.setCreatedTime(rs.getTimestamp("created_at"));
+                exp.setRequester(rs.getInt("requester_id"));
+                exp.setDecisionTime(rs.getTimestamp("decision_at"));
+                exp.setReviewerComments(rs.getString("decision_comments"));
+                exp.setReviewer(rs.getInt("reviewer_id"));
+                expenses.add(exp);
             }
-            else{
-                throw new SQLException();
-            }
 
-        } catch (SQLException e){
-            e.printStackTrace();
+            avenger.setMemberExpenses(expenses);
+            return avenger;
+        }catch(SQLException e){
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public Avenger checkLogin(LoginCredentials loginCredentials){
+        try(Connection conn = ConnectionUtil.makeConnection()){
+            String query = "select id, username, is_manager from avengers where username = ? and password = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, loginCredentials.getUsername());
+            ps.setString(2, loginCredentials.getPassword());
+            ResultSet rs = ps.executeQuery();
+            Avenger user = new Avenger();
+            user.setId(rs.getInt("id"));
+            user.setUsername(rs.getString("username"));
+            user.setManager(rs.getBoolean("is_manager"));
+            return user;
+        }catch(SQLException e){
+            logger.error(e.getMessage());
             return null;
         }
     }

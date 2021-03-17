@@ -1,45 +1,27 @@
 package dev.lipco.entities;
 
-import javax.persistence.*;
+import java.util.HashSet;
 
-@Entity
-@Table(name = "avengers")
 public class Avenger {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
-
-    @Column(name = "first_name")
     private String firstName;
-
-    @Column(name = "last_name")
     private String lastName;
-
-    @Column(name = "is_manager")
     private boolean manager;
-
-    @Column(name="username")
     private String username;
-
-    @Column(name="password")
     private String password;
+    private HashSet<Expense> memberExpenses;
+    private String jwt;
 
-    public Avenger() {}
-
-    public Avenger(String username, String password){
-        this.username = username;
-        this.password = password;
-    }
-
-    public Avenger(int id, String firstName, String lastName, boolean manager, String username, String password) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.manager = manager;
-        this.username = username;
-        this.password = password;
+    public Avenger(){
+        this.id = 0;
+        this.firstName = "";
+        this.lastName = "";
+        this.manager = false;
+        this.username = "";
+        this.password = "";
+        this.memberExpenses = null;
+        this.jwt = null;
     }
 
     public int getId() {
@@ -47,6 +29,9 @@ public class Avenger {
     }
 
     public void setId(int id) {
+        if(id <= 0) {
+            throw new IllegalArgumentException("ID is invalid");
+        }
         this.id = id;
     }
 
@@ -79,6 +64,12 @@ public class Avenger {
     }
 
     public void setUsername(String username) {
+        if(username == null) {
+            throw new IllegalArgumentException("Username cannot be null");
+        }
+        if(username.equals("")) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
         this.username = username;
     }
 
@@ -87,7 +78,38 @@ public class Avenger {
     }
 
     public void setPassword(String password) {
+        if(password == null) {
+            throw new IllegalArgumentException("password cannot be null");
+        }
+        if(password.equals("")) {
+            throw new IllegalArgumentException("password cannot be empty");
+        }
         this.password = password;
+    }
+
+    public HashSet<Expense> getMemberExpenses() {
+        return memberExpenses;
+    }
+
+    public void setMemberExpenses(HashSet<Expense> memberExpenses) {
+        if(memberExpenses == null){
+            throw new IllegalArgumentException("Expenses cannot be null");
+        }
+        this.memberExpenses = memberExpenses;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        if(jwt == null) {
+            throw new IllegalArgumentException("jwt cannot be null");
+        }
+        if(jwt.equals("")) {
+            throw new IllegalArgumentException("jwt cannot be empty");
+        }
+        this.jwt = jwt;
     }
 
     @Override
@@ -96,9 +118,11 @@ public class Avenger {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", manager='" + manager + '\'' +
+                ", manager=" + manager +
                 ", username='" + username + '\'' +
-                ", password" +
+                ", password='" + password + '\'' +
+                ", memberExpenses=" + memberExpenses +
+                ", jwt='" + jwt + '\'' +
                 '}';
     }
 }

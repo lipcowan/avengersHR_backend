@@ -43,3 +43,5 @@
 2021-03-15 09:08:54 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $3500.03
 2021-03-15 09:52:18 INFO  LoginController:34 - Login by pepper was successful
 2021-03-15 09:53:18 INFO  LoginController:34 - Login by pepper was successful
+2021-03-16 23:23:17 ERROR PsqlExpenseDAO:153 - ResultSet not positioned properly, perhaps you need to call next.
+2021-03-16 23:23:17 WARN  ExpenseController:184 - Failed attempted login with username: spiderman

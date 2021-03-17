@@ -1,76 +1,67 @@
 package dev.lipco.services;
 
-import dev.lipco.entities.Expense;
-import dev.lipco.daos.ExpenseDAO;
-import dev.lipco.entities.Avenger;
-import dev.lipco.daos.AvengerDAO;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
+import dev.lipco.daos.ExpenseDAO;
+import dev.lipco.entities.*;
+import org.apache.log4j.Logger;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Set;
 
+
 public class ExpenseServiceImpl implements ExpenseService {
-    private ExpenseDAO edao;
-    private AvengerDAO adao;
+    private final ExpenseDAO edao;
+    static Logger logger = Logger.getLogger(ExpenseServiceImpl.class.getName());
 
-    public ExpenseServiceImpl(ExpenseDAO expenseDAO, AvengerDAO avengerDAO){
-        this.edao = expenseDAO;
-        this.adao = avengerDAO;
-    }
-
-    public enum Status {
-        pending,
-        denied,
-        approved;
-    }
-
-    @Override
-    public Expense newRequest(int requester, BigDecimal amount, String expenseComments) {
-        // no need to set anything else since db is setting default values and other values are null still
-//        String status = "pending";
-        return edao.createExpense(requester, amount, expenseComments);
-    }
-
-    @Override
-    public Set<Expense> viewMemberSubmissions(int reviewer, boolean manager){
-        Avenger reviewingMember = adao.getMemberById(reviewer);
-        Set<Expense> memberExpenses = new HashSet<>();
-        Set<Expense> allExpenses = edao.getAllExpenses();
-
-        for(Expense e : allExpenses) {
-            if (e.getRequester() == reviewingMember.getId()) {
-                memberExpenses.add(e);
-            }
+    public ExpenseServiceImpl(ExpenseDAO edao){
+        if(edao == null){
+            throw new NullPointerException();
         }
-        return  manager? allExpenses: memberExpenses;
+        this.edao = edao;
     }
 
     @Override
-    public Expense reviewExpense(int expenseId, int reviewer) {
-        Avenger reviewingMember = adao.getMemberById(reviewer);
-        Expense reviewedExpense = edao.getExpenseById(expenseId);
-        boolean manager = reviewingMember.isManager();
-        if (manager || reviewedExpense.getRequester() == reviewer){
-            return  reviewedExpense;
-        }
-        return null;
+    public Avenger getAvenger(Avenger avenger){
+        return edao.getAvenger(avenger);
     }
 
     @Override
-    public Expense finalizeDecision(int expenseId, int reviewer, boolean decision, String reviewerComments){
-        Avenger manager = adao.getMemberById(reviewer);
-        Expense reviewedExpense  = edao.getExpenseById(expenseId);
-        // will add additional parameter checking to prevent managers from approving their own expenses - can approve all other members
-        if (manager.isManager()){
-            reviewedExpense.setReviewer(reviewer);
-            reviewedExpense.setReviewerComments(reviewerComments);
-            if(decision){
-                reviewedExpense.setStatus("approved");
-            }else{
-                reviewedExpense.setStatus("denied");
-            }
+    public Avenger login(LoginCredentials loginCredentials) throws IllegalAccessException{
+        if(loginCredentials.getUsername() == null || loginCredentials.getPassword() == null) {
+            throw new IllegalAccessException("incomplete credentials");
         }
-        return edao.updateExpense(reviewedExpense);
+        return edao.checkLogin(loginCredentials);
     }
 
+    @Override
+    public Expense newRequest(Avenger avenger, Expense expense){
+        expense.setRequester(avenger.getId());
+        return edao.createExpense(expense);
+    }
+
+    @Override
+    public Set<Expense> getAllSubmissions(Avenger avenger) throws IllegalAccessException{
+        if(!avenger.isManager()){
+            logger.warn("Illegal access attempted by user " + avenger.getUsername());
+            throw new IllegalAccessException("access denied, not a manager");
+        }
+        return edao.getAllExpenses();
+    }
+
+    @Override
+    public Expense reviewRequest(Avenger avenger, Expense expense) throws IllegalAccessException {
+
+        Expense requestedExp = edao.getExpenseById(expense.getExpenseId());
+        if (requestedExp == null){
+           throw new NullPointerException();
+        }
+
+        Instant reviewIn = Instant.now();
+        Timestamp reviewTS = Timestamp.from(reviewIn);
+
+        expense.setReviewer(avenger.getId());
+        expense.setDecisionTime(reviewTS);
+        return edao.updateExpense(expense);
+    }
 }

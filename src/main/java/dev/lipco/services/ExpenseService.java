@@ -1,13 +1,18 @@
 package dev.lipco.services;
 
 import dev.lipco.entities.Expense;
+import dev.lipco.entities.LoginCredentials;
+import dev.lipco.entities.Avenger;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 public interface ExpenseService {
-    Expense newRequest(int requester, BigDecimal amount, String expenseComments);
-    Set<Expense> viewMemberSubmissions(int reviewer, boolean manager);
-    Expense reviewExpense(int expenseId, int reviewer);
-    Expense finalizeDecision(int expenseId, int reviewer, boolean decision, String reviewerComments);
+
+    Avenger login(LoginCredentials loginCredentials) throws IllegalAccessException;
+
+    Avenger getAvenger(Avenger avenger);
+
+    Expense newRequest(Avenger avenger, Expense expense);
+    Set<Expense> getAllSubmissions(Avenger avenger) throws IllegalAccessException;
+    Expense reviewRequest(Avenger avenger, Expense expense) throws IllegalAccessException;
 }
