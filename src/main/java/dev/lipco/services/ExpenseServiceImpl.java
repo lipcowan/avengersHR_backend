@@ -57,19 +57,16 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense finalizeDecision(int expenseId, int reviewer, boolean decision, String reviewerComments){
+    public Expense finalizeDecision(int expenseId, int reviewer, String decision, String reviewerComments){
         Avenger manager = adao.getMemberById(reviewer);
         Expense reviewedExpense  = edao.getExpenseById(expenseId);
         // will add additional parameter checking to prevent managers from approving their own expenses - can approve all other members
         if (manager.isManager()){
             reviewedExpense.setReviewer(reviewer);
             reviewedExpense.setReviewerComments(reviewerComments);
-            if(decision){
-                reviewedExpense.setStatus("approved");
-            }else{
-                reviewedExpense.setStatus("denied");
-            }
+            reviewedExpense.setStatus(decision);
         }
+
         return edao.updateExpense(reviewedExpense);
     }
 

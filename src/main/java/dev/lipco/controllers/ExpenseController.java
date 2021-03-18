@@ -114,13 +114,11 @@ public class ExpenseController {
             }
 
             int expenseId = Integer.parseInt(ctx.pathParam("expenseId"));
-            boolean decision = false;
+
             String body = ctx.body();
             Gson gson = new Gson();
             Expense reviewedExpense = gson.fromJson(body, Expense.class);
-            if(reviewedExpense.getStatus().equals("approved")){
-               decision = true;
-            }
+            String decision = reviewedExpense.getStatus();
             int reviewer = reviewingManager.getId();
             String comments = reviewedExpense.getReviewerComments();
             reviewedExpense = expenseService.finalizeDecision(expenseId, reviewer, decision, comments);

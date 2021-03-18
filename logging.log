@@ -43,3 +43,77 @@
 2021-03-15 09:08:54 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $3500.03
 2021-03-15 09:52:18 INFO  LoginController:34 - Login by pepper was successful
 2021-03-15 09:53:18 INFO  LoginController:34 - Login by pepper was successful
+2021-03-17 10:11:24 INFO  LoginController:34 - Login by pepper was successful
+2021-03-17 10:27:45 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 10:28:55 INFO  LoginController:32 - Login by peter was successful
+2021-03-17 10:29:00 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 10:30:13 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 10:32:01 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 10:32:05 INFO  LoginController:32 - Login by peter was successful
+2021-03-17 10:33:23 INFO  ExpenseController:54 - Member peter has submitted a new expense request, for $101.59
+2021-03-17 11:27:09 INFO  LoginController:32 - Login by null was successful
+2021-03-17 11:28:40 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 11:29:24 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 11:30:08 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 11:51:17 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 11:55:30 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 12:00:56 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 12:02:14 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:02:16 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:02:45 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:06:49 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:07:09 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:08:13 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:09:51 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:10:05 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:10:15 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:10:31 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:10:40 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:10:45 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:10:57 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:11:02 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 12:11:02 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:16:59 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:17:01 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:20:17 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 12:20:17 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-17 12:34:28 INFO  LoginController:32 - Login by pepper was successful
+2021-03-17 12:58:08 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $222.55
+2021-03-17 13:01:42 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $111.02
+2021-03-18 04:57:04 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:00:45 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:13:07 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:13:27 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:22:20 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:22:58 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:23:30 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:24:44 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:26:33 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 05:42:43 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:43:04 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:46:26 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:46:28 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:46:57 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:02 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:04 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:09 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:35 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:39 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:48 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:47:51 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:49:43 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:49:44 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:51:44 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:51:53 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:52:04 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:52:11 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:52:42 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 05:53:21 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 05:53:24 ERROR JwtUtil:36 - The token was expected to have 3 parts, but got 1.
+2021-03-18 06:20:26 INFO  ExpenseController:125 - Expense 36 has been reviewed and isapproved
+2021-03-18 06:51:54 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 06:52:27 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 07:11:19 INFO  ExpenseController:54 - Member peter has submitted a new expense request, for $22.55
+2021-03-18 07:12:12 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 07:12:26 INFO  ExpenseController:125 - Expense 21 has been reviewed and isapproved
+2021-03-18 07:12:43 INFO  ExpenseController:125 - Expense 22 has been reviewed and isdenied

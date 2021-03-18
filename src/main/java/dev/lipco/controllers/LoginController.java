@@ -23,18 +23,13 @@ public class LoginController {
         String body = ctx.body();
         Gson gson = new Gson();
         Login login = gson.fromJson(body, Login.class);
-        Set<Avenger> allMembers = this.avengerService.getAllMembers();
         try{
             String username = login.getUsername();
             String password = login.getPassword();
-            for(Avenger member : allMembers) {
-                if(username.equals(member.getUsername())){
-                    String memberJwt = JwtUtil.makeJWT(member.getId(), username, password);
-                    ctx.result(memberJwt);
-                    logger.info("Login by " + member.getFirstName() + " was successful");
-                }
-            }
-
+            Avenger user = avengerService.getMemberByUsername(username, password);
+            String memberJwt = JwtUtil.makeJWT(user);
+            ctx.result(memberJwt);
+            logger.info("Login by " + user.getFirstName() + " was successful");
         }catch(JWTVerificationException e){
             ctx.result("Username not found");
             logger.error(e);
