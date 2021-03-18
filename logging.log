@@ -117,3 +117,12 @@
 2021-03-18 07:12:12 INFO  LoginController:32 - Login by pepper was successful
 2021-03-18 07:12:26 INFO  ExpenseController:125 - Expense 21 has been reviewed and isapproved
 2021-03-18 07:12:43 INFO  ExpenseController:125 - Expense 22 has been reviewed and isdenied
+2021-03-18 08:30:39 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 08:35:03 INFO  ExpenseController:125 - Expense 45 has been reviewed and isdenied
+2021-03-18 08:35:44 INFO  ExpenseController:125 - Expense 23 has been reviewed and isapproved
+2021-03-18 08:36:18 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $3500.55
+2021-03-18 08:38:08 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $55155.11
+2021-03-18 08:39:26 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $3511.21
+2021-03-18 08:40:33 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 09:02:51 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 09:04:56 INFO  LoginController:32 - Login by pepper was successful

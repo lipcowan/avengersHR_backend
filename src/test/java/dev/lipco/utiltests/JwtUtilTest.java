@@ -1,33 +1,36 @@
 package dev.lipco.utiltests;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import dev.lipco.utils.JwtUtil;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import dev.lipco.entities.Avenger;
+import org.junit.jupiter.api.*;
+import dev.lipco.utils.JwtUtil;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JwtUtilTest {
+    private static String jwt;
+    private static Avenger avenger;
 
     @Test
+    @Order(1)
     void make_JWT(){
-        // working with Pepper Potts as a testUser, this is a manager type
-        String testJWT = JwtUtil.makeJWT(1, "ironlady1", "tonysgirl!");
-        System.out.println("Token: " + testJWT);
+        avenger = new Avenger();
+        avenger.setId(1);
+        avenger.setUsername("ironlady1");
+        avenger.setManager(false);
+        jwt = JwtUtil.makeJWT(avenger);
+        System.out.println("Token: " + jwt);
     }
 
     @Test
+    @Order(2)
     void decode_JWT() {
         // confirm this test isn't dependant on the results of previous test by creating new jwt
-        String testJWT = JwtUtil.makeJWT(1, "ironlady1", "tonysgirl!");
-        DecodedJWT decodedJWT = JwtUtil.isValidJWT(testJWT);
-        int testID = decodedJWT.getClaim("id").asInt();
-        String username = decodedJWT.getClaim("empName").asString();
-        String password = decodedJWT.getClaim("password").asString();
-        Assertions.assertEquals(1, testID);
-        Assertions.assertEquals("ironlady1", username);
-        Assertions.assertEquals("tonysgirl!", password);
-        System.out.println("Member ID: " + testID + " , username: " + username);
+
+        DecodedJWT decodedJWT = JwtUtil.isValidJWT(jwt);
+        Assertions.assertEquals(avenger.getId(), decodedJWT.getClaim("id").asInt());
+        Assertions.assertEquals(avenger.getUsername(), decodedJWT.getClaim("userName").asString());
+        Assertions.assertEquals(avenger.isManager(), decodedJWT.getClaim("isManager").asBoolean());
+        System.out.println("Member ID: " + decodedJWT.getClaim("id").asInt() + " , username: " + avenger.getUsername());
     }
 
 }
