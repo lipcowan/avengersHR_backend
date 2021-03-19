@@ -126,3 +126,21 @@
 2021-03-18 08:40:33 INFO  LoginController:32 - Login by peter was successful
 2021-03-18 09:02:51 INFO  LoginController:32 - Login by pepper was successful
 2021-03-18 09:04:56 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 10:18:40 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 10:21:02 INFO  ExpenseController:125 - Expense 39 has been reviewed and isapproved
+2021-03-18 10:22:34 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 10:26:06 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 10:29:17 INFO  ExpenseController:54 - Member peter has submitted a new expense request, for $101.59
+2021-03-18 10:33:25 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 10:34:13 INFO  ExpenseController:125 - Expense 26 has been reviewed and isapproved
+2021-03-18 10:35:00 INFO  ExpenseController:125 - Expense 27 has been reviewed and isdenied
+2021-03-18 10:35:10 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 10:35:52 INFO  ExpenseController:54 - Member peter has submitted a new expense request, for $31821.11
+2021-03-18 10:36:51 INFO  Version:44 - HHH000412: Hibernate ORM core version 5.4.28.Final
+2021-03-18 11:01:44 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 11:02:02 INFO  ExpenseController:125 - Expense 24 has been reviewed and isdenied
+2021-03-18 11:02:23 INFO  ExpenseController:54 - Member pepper has submitted a new expense request, for $50.00
+2021-03-18 11:02:45 INFO  LoginController:32 - Login by peter was successful
+2021-03-18 11:03:07 INFO  ExpenseController:54 - Member peter has submitted a new expense request, for $25.21
+2021-03-18 11:03:32 INFO  LoginController:32 - Login by pepper was successful
+2021-03-18 11:03:55 INFO  ExpenseController:125 - Expense 25 has been reviewed and isapproved
