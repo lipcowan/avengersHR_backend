@@ -10,5 +10,8 @@ hibernate.cfg.xml
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
+avengersLog.log
+avengersTest.log
+
 # Cache of project
 .gradletasknamecache

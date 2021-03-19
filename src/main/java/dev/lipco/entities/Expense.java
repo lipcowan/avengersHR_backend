@@ -1,40 +1,26 @@
 package dev.lipco.entities;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@Entity
-@Table(name = "expense")
+
 public class Expense {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "expense_id")
     private int expenseId;
 
-    @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "expense_comments")
     private String expenseComments;
 
-    @Column(name = "expense_status")
     private String status;
 
-    @Column(name = "created_at")
     private Timestamp createdTime;
 
-    @Column(name = "requester_id")
     private int requester;
 
-    @Column(name = "reviewer_id")
     private int reviewer;
 
-    @Column(name = "decision_at")
     private Timestamp decisionTime;
 
-    @Column(name = "decision_comments")
     private String reviewerComments;
 
     public Expense() {}
